@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CampusConnect — Campus Event Management Portal</title>
+    <meta
+      name="description"
+      content="CampusConnect is a campus event management and student registration portal for college events, workshops, seminars, and cultural fests."
+    />
+    <meta property="og:title" content="CampusConnect — Campus Event Management Portal" />
+    <meta
+      property="og:description"
+      content="Discover upcoming college events, check live seat availability, register online, and print your confirmation slip."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+      <div class="nav-container">
+        <a href="#home" class="brand" data-nav="home-section">
+          <svg
+            class="brand-logo"
+            width="32"
+            height="32"
+            viewBox="0 0 32 32"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <rect width="32" height="32" rx="8" fill="#1D4ED8" />
+            <path
+              d="M9 12.5C9 11.1193 10.1193 10 11.5 10H20.5C21.8807 10 23 11.1193 23 12.5V21.5C23 22.8807 21.8807 24 20.5 24H11.5C10.1193 24 9 22.8807 9 21.5V12.5Z"
+              stroke="#FFFFFF"
+              stroke-width="2"
+            />
+            <path d="M9 15H23" stroke="#FFFFFF" stroke-width="2" />
+            <path d="M13 8V11" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" />
+            <path d="M19 8V11" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" />
+            <circle cx="16" cy="19.5" r="1.75" fill="#FFFFFF" />
+          </svg>
+          <span class="brand-name">CampusConnect</span>
+        </a>
+
+        <button
+          type="button"
+          id="menuToggleBtn"
+          class="menu-toggle"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav id="mainNav" class="nav-links" aria-label="Primary Navigation">
+          <button type="button" class="nav-link active" data-section="home-section">
+            Home
+          </button>
+          <button type="button" class="nav-link" data-section="events-section">
+            Upcoming Events
+          </button>
+          <button type="button" class="nav-link" data-section="registrations-section">
+            My Registrations
+          </button>
+          <button type="button" class="nav-link" data-section="admin-section">
+            Admin Dashboard
+          </button>
+        </nav>
+
+        <div class="nav-action">
+          <button type="button" id="navRegisterBtn" class="btn btn-primary">
+            Explore Events
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Notification Banner -->
+    <div id="notificationBox" class="notification-box" role="status" aria-live="polite" hidden>
+      <span id="notificationIcon" class="notification-icon" aria-hidden="true"></span>
+      <p id="notificationMessage" class="notification-message"></p>
+      <button type="button" id="closeNotificationBtn" class="notification-close" aria-label="Dismiss notification">
+        &times;
+      </button>
+    </div>
+
+    <!-- Main Portal Content -->
+    <main class="container">
+      <!-- 1. HOME PAGE SECTION -->
+      <section id="home-section" class="page-section active">
+        <div class="hero-card">
+          <div class="hero-text">
+            <p class="eyebrow">College Event &amp; Registration Portal</p>
+            <h1>Welcome to CampusConnect</h1>
+            <p class="hero-description">
+              Your central hub for discovering upcoming college hackathons, technical workshops,
+              guest seminars, music nights, and cultural fests. Check live seat availability,
+              register in seconds, and print your event confirmation slip anytime.
+            </p>
+            <div class="hero-actions">
+              <button type="button" id="heroBrowseBtn" class="btn btn-primary">
+                Browse Upcoming Events
+              </button>
+              <button type="button" id="heroRegistrationsBtn" class="btn btn-outline">
+                View My Registrations
+              </button>
+            </div>
+          </div>
+
+          <div class="hero-summary">
+            <h2>Campus Activity Snapshot</h2>
+            <p class="summary-note">
+              Real-time totals updated automatically as students register and organizers publish events.
+            </p>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <span class="stat-label">Total Events</span>
+                <strong id="statTotalEvents" class="stat-value">0</strong>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">Available Seats</span>
+                <strong id="statAvailableSeats" class="stat-value">0</strong>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">Total Registrations</span>
+                <strong id="statTotalRegistrations" class="stat-value">0</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Preview of Upcoming Events on Home -->
+        <div class="section-block">
+          <div class="section-header-row">
+            <div>
+              <h2>Featured Upcoming Events</h2>
+              <p class="section-subtitle">
+                Quick look at upcoming campus activities with live seat counts.
+              </p>
+            </div>
+            <button type="button" id="viewAllEventsBtn" class="btn btn-link">
+              See all events &rarr;
+            </button>
+          </div>
+          <div id="homeFeaturedGrid" class="events-grid"></div>
+        </div>
+      </section>
+
+      <!-- 2. UPCOMING EVENTS SECTION -->
+      <section id="events-section" class="page-section">
+        <div class="section-header">
+          <h2>Upcoming Campus Events</h2>
+          <p class="section-subtitle">
+            Search by keyword or filter by category to find events and reserve your seat.
+          </p>
+        </div>
+
+        <div class="filter-toolbar">
+          <div class="search-wrap">
+            <label for="searchInput" class="sr-only">Search events</label>
+            <input
+              type="text"
+              id="searchInput"
+              class="form-input"
+              placeholder="Search by event name, venue, or description..."
+            />
+          </div>
+          <div id="categoryFilterBar" class="category-tabs" role="group" aria-label="Filter events by category">
+            <button type="button" class="filter-btn active" data-category="All">All</button>
+            <button type="button" class="filter-btn" data-category="Coding">Coding</button>
+            <button type="button" class="filter-btn" data-category="Workshop">Workshop</button>
+            <button type="button" class="filter-btn" data-category="Seminar">Seminar</button>
+            <button type="button" class="filter-btn" data-category="Music">Music</button>
+            <button type="button" class="filter-btn" data-category="Cultural">Cultural</button>
+          </div>
+        </div>
+
+        <div id="eventsGrid" class="events-grid"></div>
+      </section>
+
+      <!-- 3. MY REGISTRATIONS SECTION -->
+      <section id="registrations-section" class="page-section">
+        <div class="section-header">
+          <h2>My Registrations</h2>
+          <p class="section-subtitle">
+            View your confirmed event registrations and print your official confirmation slip.
+          </p>
+        </div>
+
+        <div class="filter-toolbar">
+          <div class="search-wrap">
+            <label for="regSearchInput" class="sr-only">Filter registrations by Student ID, Name, or Email</label>
+            <input
+              type="text"
+              id="regSearchInput"
+              class="form-input"
+              placeholder="Filter by Student ID, Name, Email, or Event..."
+            />
+          </div>
+          <button type="button" id="clearRegFilterBtn" class="btn btn-outline">
+            Show All
+          </button>
+        </div>
+
+        <div id="registrationsList" class="registrations-list"></div>
+      </section>
+
+      <!-- 4. ADMIN DASHBOARD SECTION -->
+      <section id="admin-section" class="page-section">
+        <div class="section-header">
+          <h2>Admin Dashboard</h2>
+          <p class="section-subtitle">
+            Add, edit, or delete campus events, monitor seat capacity, and inspect registered students.
+          </p>
+        </div>
+
+        <div class="admin-layout">
+          <!-- Add / Edit Event Form -->
+          <div class="panel-card">
+            <h3 id="eventFormTitle">Add New Event</h3>
+            <form id="eventForm" class="stack-form" novalidate>
+              <input type="hidden" id="editEventId" value="" />
+
+              <div class="form-group">
+                <label for="eventName">Event Name <span class="required">*</span></label>
+                <input
+                  type="text"
+                  id="eventName"
+                  class="form-input"
+                  placeholder="e.g., CodeSprint Hackathon"
+                  required
+                />
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="eventCategory">Category <span class="required">*</span></label>
+                  <select id="eventCategory" class="form-input" required>
+                    <option value="">Select Category</option>
+                    <option value="Coding">Coding</option>
+                    <option value="Workshop">Workshop</option>
+                    <option value="Seminar">Seminar</option>
+                    <option value="Music">Music</option>
+                    <option value="Cultural">Cultural</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="eventCapacity">Seat Limit <span class="required">*</span></label>
+                  <input
+                    type="number"
+                    id="eventCapacity"
+                    class="form-input"
+                    min="1"
+                    max="2000"
+                    placeholder="e.g., 50"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="eventDate">Date <span class="required">*</span></label>
+                  <input type="date" id="eventDate" class="form-input" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="eventTime">Time <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    id="eventTime"
+                    class="form-input"
+                    placeholder="e.g., 10:00 AM - 02:00 PM"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="eventVenue">Venue <span class="required">*</span></label>
+                <input
+                  type="text"
+                  id="eventVenue"
+                  class="form-input"
+                  placeholder="e.g., Main Auditorium, Block A"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="eventDescription">Description <span class="required">*</span></label>
+                <textarea
+                  id="eventDescription"
+                  class="form-input"
+                  rows="3"
+                  placeholder="Brief details about the event..."
+                  required
+                ></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" id="saveEventBtn" class="btn btn-primary">
+                  Add Event
+                </button>
+                <button type="button" id="cancelEditBtn" class="btn btn-outline" hidden>
+                  Cancel Edit
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Manage Events Table & Student Roster -->
+          <div class="admin-tables-col">
+            <div class="panel-card">
+              <h3>Manage Events &amp; Seat Capacity</h3>
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Event</th>
+                      <th>Date &amp; Venue</th>
+                      <th class="num-col">Capacity</th>
+                      <th class="num-col">Registered</th>
+                      <th class="num-col">Available</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminEventsTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Registered Students for Selected Event -->
+            <div id="studentRosterPanel" class="panel-card" hidden>
+              <div class="roster-header">
+                <div>
+                  <h3 id="rosterEventTitle">Registered Students</h3>
+                  <p id="rosterSeatSummary" class="section-subtitle"></p>
+                </div>
+                <button type="button" id="closeRosterBtn" class="btn btn-outline btn-sm">
+                  Close List
+                </button>
+              </div>
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Student Name</th>
+                      <th>Student ID</th>
+                      <th>Email</th>
+                      <th>Department</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rosterTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Student Registration Modal -->
+    <div id="registerModal" class="modal-backdrop" hidden>
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="registerModalTitle">
+        <div class="modal-header">
+          <h3 id="registerModalTitle">Student Event Registration</h3>
+          <button type="button" id="closeRegisterModalBtn" class="modal-close" aria-label="Close modal">
+            &times;
+          </button>
+        </div>
+
+        <div id="modalEventSummary" class="modal-event-summary"></div>
+
+        <form id="registrationForm" class="stack-form" novalidate>
+          <input type="hidden" id="regEventId" value="" />
+
+          <div class="form-group">
+            <label for="regName">Student Name <span class="required">*</span></label>
+            <input
+              type="text"
+              id="regName"
+              class="form-input"
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="regStudentId">Student ID <span class="required">*</span></label>
+            <input
+              type="text"
+              id="regStudentId"
+              class="form-input"
+              placeholder="e.g., BTECH2026045"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="regEmail">College Email <span class="required">*</span></label>
+            <input
+              type="email"
+              id="regEmail"
+              class="form-input"
+              placeholder="e.g., student@college.edu"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="regDepartment">Department <span class="required">*</span></label>
+            <select id="regDepartment" class="form-input" required>
+              <option value="">Select Department</option>
+              <option value="CSE">Computer Science &amp; Engineering (CSE)</option>
+              <option value="IT">Information Technology (IT)</option>
+              <option value="ECE">Electronics &amp; Communication (ECE)</option>
+              <option value="EE">Electrical Engineering (EE)</option>
+              <option value="ME">Mechanical Engineering (ME)</option>
+              <option value="CE">Civil Engineering (CE)</option>
+              <option value="AI & DS">AI &amp; Data Science</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-actions modal-actions">
+            <button type="submit" class="btn btn-primary">Confirm Registration</button>
+            <button type="button" id="cancelRegisterBtn" class="btn btn-outline">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Printable Confirmation Slip Modal -->
+    <div id="slipModal" class="modal-backdrop" hidden>
+      <div class="modal-dialog slip-dialog" role="dialog" aria-modal="true" aria-labelledby="slipModalTitle">
+        <div class="modal-header no-print">
+          <h3 id="slipModalTitle">Registration Confirmation Slip</h3>
+          <button type="button" id="closeSlipModalBtn" class="modal-close" aria-label="Close confirmation slip">
+            &times;
+          </button>
+        </div>
+
+        <div id="printableSlip" class="slip-card">
+          <div class="slip-header">
+            <div>
+              <strong class="slip-brand">CampusConnect</strong>
+              <p class="slip-tagline">Official Event Registration Confirmation</p>
+            </div>
+            <div class="slip-status-block">
+              <span class="slip-status-label">Status: Confirmed</span>
+              <span id="slipRegId" class="slip-id"></span>
+            </div>
+          </div>
+
+          <div class="slip-grid">
+            <div class="slip-field">
+              <span class="slip-label">Student Name</span>
+              <strong id="slipStudentName"></strong>
+            </div>
+            <div class="slip-field">
+              <span class="slip-label">Student ID</span>
+              <strong id="slipStudentId"></strong>
+            </div>
+            <div class="slip-field">
+              <span class="slip-label">Department</span>
+              <strong id="slipDepartment"></strong>
+            </div>
+            <div class="slip-field">
+              <span class="slip-label">Email</span>
+              <strong id="slipEmail"></strong>
+            </div>
+          </div>
+
+          <hr class="slip-divider" />
+
+          <div class="slip-grid">
+            <div class="slip-field slip-field-wide">
+              <span class="slip-label">Event Name</span>
+              <strong id="slipEventName"></strong>
+            </div>
+            <div class="slip-field">
+              <span class="slip-label">Category</span>
+              <strong id="slipCategory"></strong>
+            </div>
+            <div class="slip-field">
+              <span class="slip-label">Date &amp; Time</span>
+              <strong id="slipDateTime"></strong>
+            </div>
+            <div class="slip-field slip-field-wide">
+              <span class="slip-label">Venue</span>
+              <strong id="slipVenue"></strong>
+            </div>
+          </div>
+
+          <p class="slip-footer-note">
+            Please carry your College ID Card along with this confirmation slip to the venue.
+            Registered on: <span id="slipRegisteredAt"></span>
+          </p>
+        </div>
+
+        <div class="form-actions modal-actions no-print">
+          <button type="button" id="printSlipBtn" class="btn btn-primary">
+            Print Confirmation Slip
+          </button>
+          <button type="button" id="doneSlipBtn" class="btn btn-outline">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Event Confirmation Modal -->
+    <div id="deleteModal" class="modal-backdrop" hidden>
+      <div class="modal-dialog modal-dialog-sm" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+        <div class="modal-header">
+          <h3 id="deleteModalTitle">Delete Event</h3>
+          <button type="button" id="closeDeleteModalBtn" class="modal-close" aria-label="Close modal">
+            &times;
+          </button>
+        </div>
+        <p id="deleteModalText" class="delete-confirm-text"></p>
+        <div class="form-actions modal-actions">
+          <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Delete Event</button>
+          <button type="button" id="cancelDeleteBtn" class="btn btn-outline">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-container">
+        <p>&copy; 2026 CampusConnect &middot; College Event Management &amp; Registration Portal</p>
+      </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>
